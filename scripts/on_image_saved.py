@@ -4,9 +4,9 @@ import os, traceback
 import concurrent.futures
 
 from modules import paths, shared
+from modules import prompt_parser
 from modules import script_callbacks
 
-from scripts.parser import Parser
 from scripts.tag_generator import TagGenerator
 from scripts.immich.api import Api
 from scripts.immich.assets import upload, update
@@ -18,16 +18,18 @@ def dprint(str):
     if DEBUG:
         print(str)
 
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
     if not shared.opts.immich_server_url_port or not shared.opts.immich_api_key:
         print(f"sdweb-immich-uploader: on_image_saved: server url or key missing")
         return
     api = Api(shared.opts.immich_server_url_port, shared.opts.immich_api_key)
     dprint(f"DEBUG:on_image_saved:  uploaded image {api._url},{api._key}")
-    meta = {'description': annotation} if annotation else {}
     try:
+        meta = {}
+        if annotation:
+            meta['description'] = annotation
+        if shared.opts.immich_archive_after_upload:
+            meta['isArchived'] = 'true'
         id, _ = upload(api, imagefile, meta)
         dprint(f"DEBUG:on_image_saved:  uploaded image id {id}")
         update(api, id, meta)
@@ -52,7 +54,18 @@ def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
         print(f"DEBUG:on_image_saved:  Exception {e}")
         traceback.print_exception(e)
 
+def prompt_to_tags(p):
+    use_prompt_parser = shared.opts.use_prompt_parser_when_save_prompt_to_immich_as_tags
+
+    if use_prompt_parser:
+        return [ x[0].strip() for x in prompt_parser.parse_prompt_attention(p) ]
+    else:
+        return [ x.strip() for x in p.split(",") if x.strip() != "" ]
+
+executor = None
+
 def on_image_saved(params:script_callbacks.ImageSaveParams) -> None:
+    global executor
     if not shared.opts.enable_immich_integration:
         dprint(f"DEBUG:on_image_saved:  DISABLED")
     else:
@@ -70,18 +83,24 @@ def on_image_saved(params:script_callbacks.ImageSaveParams) -> None:
             annotation = info
         if shared.opts.save_positive_prompt_to_immich_as_tags:
             if len(pos_prompt.split(",")) > 0:
-                tags += Parser.prompt_to_tags(pos_prompt)
+                tags += prompt_to_tags(pos_prompt)
         if shared.opts.save_negative_prompt_to_immich_as == "tag":
             if len(neg_prompt.split(",")) > 0:
-                tags += Parser.prompt_to_tags(neg_prompt)
+                tags += prompt_to_tags(neg_prompt)
         elif shared.opts.save_negative_prompt_to_immich_as == "n:tag":
             if len(neg_prompt.split(",")) > 0:
-                tags += [ f"n:{x}" for x in Parser.prompt_to_tags(neg_prompt) ]
+                tags += [ f"n:{x}" for x in prompt_to_tags(neg_prompt) ]
         if shared.opts.additional_tags_to_immich != "":
             gen = TagGenerator(p=params.p, image=params.image)
             _tags = gen.generate_from_p(shared.opts.additional_tags_to_immich)
             if _tags and len(_tags) > 0:
                 tags += _tags
-        executor.submit(uploadImage, fullfn, annotation, tags)
+        num_threads = shared.opts.immich_upload_threads_number
+        if num_threads <= 0:
+            uploadImage(fullfn, annotation, tags)
+        else:
+            if executor is None:
+                executor = concurrent.futures.ThreadPoolExecutor(max_workers=num_threads)
+            executor.submit(uploadImage, fullfn, annotation, tags)
 
 script_callbacks.on_image_saved(on_image_saved)
