@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Any
+import json
 from .api import Api, ImmichError
 
 class Tag:
@@ -19,8 +20,9 @@ class Tag:
         return value
 
     def tagassets(self, *ids:str) -> None:
-        data = { "ids":  ids + (ids[0],) }
-        response = self._tags._api.put(f'/tags/{self.id}/assets', data=data)
+        data = json.dumps({ "ids":  ids })
+        header = { "content-type": "application/json" }
+        response = self._tags._api.put(f'/tags/{self.id}/assets', headers=header, data=data)
         if not response.ok:
             raise ImmichError(response)
 
