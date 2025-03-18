@@ -1,11 +1,6 @@
 from __future__ import annotations
 from typing import Any
-if __package__:
-    from .api import Api, ImmichError
-    from .user import currentuser
-else:
-    from api import Api, ImmichError
-    from user import currentuser
+from .api import Api, ImmichError
 
 class Tag:
     _json: dict[str, Any]
@@ -90,10 +85,3 @@ class Tags:
         tag = Tag(self, json, parent)
         self._tags[json['id']] = tag
         return tag
-
-if __name__ == '__main__':
-    api = Api('https://qnapv6.arimoto.biz:32263', 'R4n9DaW6c08MgGUrgCuSN8Kuz3Dx2xQa2ccscDEE4')
-    tags = Tags(api)
-    tags.load()
-    tag = tags.getorcreate('Model: theWondermix_v14LCM')
-    print(tag)

@@ -22,7 +22,7 @@ executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
 
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
     if not shared.opts.immich_server_url_port or not shared.opts.immich_api_key:
-        print(f"sdweb-immich-uploader :on_image_saved: server url or key missing")
+        print(f"sdweb-immich-uploader: on_image_saved: server url or key missing")
         return
     api = Api(shared.opts.immich_server_url_port, shared.opts.immich_api_key)
     dprint(f"DEBUG:on_image_saved:  uploaded image {api._url},{api._key}")
@@ -56,7 +56,7 @@ def on_image_saved(params:script_callbacks.ImageSaveParams) -> None:
     if not shared.opts.enable_immich_integration:
         dprint(f"DEBUG:on_image_saved:  DISABLED")
     else:
-        dprint(f"DEBUG:on_image_saved:  ENABELD. enable_immich_pnginfo is true. {__package__}")
+        dprint(f"DEBUG:on_image_saved:  ENABELD. enable_immich_pnginfo is true.")
         # collect info
         fullfn = os.path.join(paths.script_path, params.filename)
         info = params.pnginfo.get('parameters', None)

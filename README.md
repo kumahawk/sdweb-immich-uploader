@@ -1,9 +1,14 @@
-# Immich-pnginfo
+# Immich-uploader
 
 ![](misc/sss_top.png)
 
 - This is Extension for [AUTOMATIC1111's Stable Diffusion Web UI](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
-- Send your creation image to [Immich](https://immich.app/) (image management software) with Generation info, tags.
+- Send your creation image to [Immich](https://immich.app/) (photo management server) with Generation info, tags.
+
+## Disclaimer
+
+This extension is inspired by [sdweb-eagle-pnginfo](https://github.com/kumahawk/sdweb-eagle-pnginfo) and
+plenty of code was from theirs ##special thanks
 
 ## How to Install
 
@@ -11,11 +16,11 @@
 
 - `Install from URL` with this repo URL
 
-- Install
+- Install and restart web UI
 
 ## How to use
 
-- At "Immich" UI, create API key on account setting menu
+- On "Immich" UI, create API key in "account setting"
 
 - On "AUTO1111", enable this extension in "Setting" and fill server url and API key
 
