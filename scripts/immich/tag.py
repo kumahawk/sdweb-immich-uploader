@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Any
-import json
 from .api import Api, ImmichError
 
 class Tag:
@@ -20,9 +19,8 @@ class Tag:
         return value
 
     def tagassets(self, *ids:str) -> None:
-        data = json.dumps({ "ids":  ids })
-        header = { "content-type": "application/json" }
-        response = self._tags._api.put(f'/tags/{self.id}/assets', headers=header, data=data)
+        data = { "ids":  ids } 
+        response = self._tags._api.put(f'/tags/{self.id}/assets', json=data)
         if not response.ok:
             raise ImmichError(response)
 
@@ -56,14 +54,14 @@ class Tags:
                 return tag
         return None
     
-    def getbynames(self, names: list[str]) -> Tag|None:
-        parentid = None
-        tag = None
+    def getbynames(self, name0: str, *names: str) -> Tag|None:
+        tag = self.getbyname(name0)
+        if tag is None:
+            return None
         for name in names:
-            tag = self.getbyname(name, parentid)
+            tag = self.getbyname(name, tag)
             if tag is None:
                 return None
-            parentid = tag.id
         return tag
 
     def getorcreate(self, name: str, parent:Tag|None = None) -> Tag:
@@ -78,9 +76,9 @@ class Tags:
             tag = self.getorcreate(name, tag)
         return tag
     
-    def create(self, name: str, parent:Tag|None = None) -> Tag:
+    def create(self, name: str, parent: Tag|None = None) -> Tag:
         data = { "name": name, "parentId": parent.id } if parent else { "name": name }
-        response = self._api.post('/tags', data=data)
+        response = self._api.post('/tags', json=data)
         if not response.ok:
             raise ImmichError(response)
         json = response.json()

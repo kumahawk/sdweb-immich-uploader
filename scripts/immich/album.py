@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Any
-import json
 from .api import Api, ImmichError
 from .user import currentuser
 
@@ -19,9 +18,8 @@ class Album:
         return value
 
     def addassets(self, *ids:str) -> None:
-        data = json.dumps({ "ids":  ids })
-        header = { "content-type": "application/json" }
-        response = self._albums._api.put(f'/albums/{self.id}/assets', headers=header, data=data)
+        data = { "ids":  ids }
+        response = self._albums._api.put(f'/albums/{self.id}/assets', json=data)
         if not response.ok:
             raise ImmichError(response)
     
@@ -61,7 +59,7 @@ class Albums:
                 }
             ]
         }
-        response = self._api.post('/albums', data=data)
+        response = self._api.post('/albums', json=data)
         if not response.ok:
             raise ImmichError(response)
         json = response.json()
