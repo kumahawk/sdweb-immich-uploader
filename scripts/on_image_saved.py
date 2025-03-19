@@ -1,5 +1,3 @@
-import modules.scripts as scripts
-import gradio as gr
 import os, traceback
 import concurrent.futures
 
