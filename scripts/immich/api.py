@@ -20,6 +20,9 @@ class Api:
     def put(self, url:str, headers:dict = {}, **keyparams) -> requests.Response:
         return requests.put(self._url + url, headers=self._headers(headers), **keyparams)
 
+    def patch(self, url:str, headers:dict = {}, **keyparams) -> requests.Response:
+        return requests.patch(self._url + url, headers=self._headers(headers), **keyparams)
+
     def delete(self, url:str, headers:dict = {}, **keyparams) -> requests.Response:
         return requests.delete(self._url + url, headers=self._headers(headers), **keyparams)
 

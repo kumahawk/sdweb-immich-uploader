@@ -27,7 +27,7 @@ def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
         if annotation:
             meta['description'] = annotation
         if shared.opts.immich_archive_after_upload:
-            meta['isArchived'] = 'true'
+            meta['visibility'] = 'archive'
         id, _ = upload(api, imagefile, meta)
         dprint(f"DEBUG:on_image_saved:  uploaded image id {id}")
         update(api, id, meta)

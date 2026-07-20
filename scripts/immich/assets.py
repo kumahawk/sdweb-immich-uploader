@@ -17,15 +17,16 @@ def filedigest(path) -> bytes:
 
 def upload(api: Api, path:str, meta:dict):
     basename = os.path.basename(path)
+    local_tz = datetime.datetime.now().astimezone().tzinfo
     btime = None
     if meta and ('btime' in meta.keys()):
-        btime = datetime.datetime.fromtimestamp(meta["btime"]/1000)
+        btime = datetime.datetime.fromtimestamp(meta["btime"]/1000, tz=local_tz)
     mtime = None
     if meta and ('mtime' in meta.keys()):
-        mtime = datetime.datetime.fromtimestamp(meta["mtime"]/1000)
+        mtime = datetime.datetime.fromtimestamp(meta["mtime"]/1000, tz=local_tz)
     if not(mtime and btime):
         stats = os.stat(path)
-        mt = datetime.datetime.fromtimestamp(stats.st_mtime)
+        mt = datetime.datetime.fromtimestamp(stats.st_mtime, tz=local_tz)
         if not mtime:
             mtime = mt
         if not btime:
@@ -34,8 +35,8 @@ def upload(api: Api, path:str, meta:dict):
     data = {
         "deviceAssetId": f"{basename}-{mtime.timestamp()}",
         "deviceId": "stablediffusion",
-        "fileCreatedAt": btime,
-        "fileModifiedAt": mtime,
+        "fileCreatedAt": btime.isoformat(),
+        "fileModifiedAt": mtime.isoformat(),
         "isFavorite": "false",
         "isArchived ": archived,
     }
@@ -52,6 +53,6 @@ def upload(api: Api, path:str, meta:dict):
 def update(api: Api, assetid:str, meta:dict) -> None:
     if not meta:
         return
-    response = api.put(f"/assets/{assetid}", data=meta)
+    response = api.patch(f"/assets", json=({ "ids": [ assetid ] } | meta))
     if not response.ok:
         raise ImmichError(response)
