@@ -16,6 +16,63 @@ def dprint(str):
     if DEBUG:
         print(str)
 
+def pickuptags(description: str) -> list[str]:
+    tags = []
+    if description:
+        if description.find('from behind') >= 0:
+            if description.find('ass') >= 0:
+                tags.append('お尻')
+        if description.find('school swimsuit') >= 0:
+            tags.append('スク水')
+        elif description.find('swimsuit') >= 0:
+            tags.append('水着')
+        elif description.find('swimware') >= 0:
+            tags.append('水着')
+        elif description.find('bikini') >= 0:
+            tags.append('水着')
+        if description.find('wedding') >= 0:
+            tags.append('ウェディング')
+        elif description.find('bridal') >= 0:
+            tags.append('ウェディング')
+        if description.find('1boy') >= 0:
+            if description.find('sissy') >= 0:
+                tags.append('おとこの娘')
+            elif description.find('girlish') >= 0:
+                tags.append('おとこの娘')
+        if description.find('business') >= 0:
+            tags.append('スーツ')
+        if description.find('school uniform') >= 0:
+            tags.append('制服')
+        if description.find('gym uniform') >= 0:
+            tags.append('ブルマ')
+        if description.find('pussy juice') >= 0:
+            tags.append('汁')
+        if description.find('milf') >= 0:
+            tags.append('熟女')
+        elif description.find('mature female') >= 0:
+            tags.append('熟女')
+        elif description.find('mature woman') >= 0:
+            tags.append('熟女')
+        if description.find('magical girl') >= 0:
+            tags.append('魔法少女')
+        if description.find('maid') >= 0:
+            tags.append('メイド')
+        if description.find('lingerie') >= 0:
+            tags.append('ランジェリー')
+        elif description.find('babydoll') >= 0:
+            tags.append('ランジェリー')
+        elif description.find('slip') >= 0:
+            tags.append('ランジェリー')
+        if description.find('large breasts') >= 0:
+            tags.append('大胸')
+        elif description.find('huge breasts') >= 0:
+            tags.append('超胸')
+        elif description.find('medium breasts') >= 0:
+            tags.append('中胸')
+        elif description.find('small breasts') >= 0:
+            tags.append('小胸')
+    return tags
+
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
     if not shared.opts.immich_server_url_port or not shared.opts.immich_api_key:
         print(f"sdweb-immich-uploader: on_image_saved: server url or key missing")
@@ -79,6 +136,11 @@ def on_image_saved(params:script_callbacks.ImageSaveParams) -> None:
         tags = []
         if shared.opts.save_generationinfo_to_immich_as_annotation:
             annotation = info
+        if params.filename.find('grid_') >= 0:
+            tags.append('グリッド')
+        else:
+            tags += pickuptags(pos_prompt)
+        info = params.pnginfo.get('parameters', None)
         if shared.opts.save_positive_prompt_to_immich_as_tags:
             if len(pos_prompt.split(",")) > 0:
                 tags += prompt_to_tags(pos_prompt)
