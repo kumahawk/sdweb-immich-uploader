@@ -136,7 +136,7 @@ def on_image_saved(params:script_callbacks.ImageSaveParams) -> None:
         tags = []
         if shared.opts.save_generationinfo_to_immich_as_annotation:
             annotation = info
-        if params.filename.find('grid_') >= 0:
+        if params.filename.find('grid-') >= 0:
             tags.append('グリッド')
         else:
             tags += pickuptags(pos_prompt)
