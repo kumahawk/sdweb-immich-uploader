@@ -41,6 +41,8 @@ def pickuptags(description: str) -> list[str]:
                 tags.append('おとこの娘')
         if description.find('business') >= 0:
             tags.append('スーツ')
+        elif description.find('office') >= 0:
+            tags.append('スーツ')
         if description.find('school uniform') >= 0:
             tags.append('制服')
         if description.find('gym uniform') >= 0:
@@ -57,6 +59,8 @@ def pickuptags(description: str) -> list[str]:
             tags.append('魔法少女')
         if description.find('maid') >= 0:
             tags.append('メイド')
+        if description.find('nurse') >= 0:
+            tags.append('ナース')
         if description.find('lingerie') >= 0:
             tags.append('ランジェリー')
         elif description.find('babydoll') >= 0:
