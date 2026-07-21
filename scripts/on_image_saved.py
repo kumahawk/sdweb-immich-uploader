@@ -74,7 +74,9 @@ def pickuptags(description: str) -> list[str]:
         elif description.find('medium breasts') >= 0:
             tags.append('中胸')
         elif description.find('small breasts') >= 0:
-            tags.append('小胸')
+            tags.append('小胸') 
+        if description.find('restrained') >= 0:
+            tags.append('拘束')
     return tags
 
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
