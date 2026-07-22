@@ -77,6 +77,8 @@ def pickuptags(description: str) -> list[str]:
             tags.append('小胸') 
         if description.find('restrained') >= 0:
             tags.append('拘束')
+        if description.find('cheerleader') >= 0:
+            tags.append('チアリーダー')
     return tags
 
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
