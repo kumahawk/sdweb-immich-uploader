@@ -67,6 +67,8 @@ def pickuptags(description: str) -> list[str]:
             tags.append('ランジェリー')
         elif description.find('slip') >= 0:
             tags.append('ランジェリー')
+        elif description.find('leotard') >= 0:
+            tags.append('ランジェリー')
         if description.find('large breasts') >= 0:
             tags.append('大胸')
         elif description.find('huge breasts') >= 0:
