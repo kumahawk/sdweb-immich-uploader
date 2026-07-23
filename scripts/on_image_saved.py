@@ -81,6 +81,12 @@ def pickuptags(description: str) -> list[str]:
             tags.append('拘束')
         if description.find('cheerleader') >= 0:
             tags.append('チアリーダー')
+        if description.find('glasses') >= 0:
+            tags.append('メガネ')
+        if description.find('bob cut') >= 0:
+            tags.append('ボブカット')
+        if description.find('bobcut') >= 0:
+            tags.append('ボブカット')
     return tags
 
 def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
