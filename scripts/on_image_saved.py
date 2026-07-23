@@ -1,4 +1,4 @@
-import os, traceback
+import os, traceback, datetime
 import concurrent.futures
 
 from modules import paths, shared
@@ -88,7 +88,9 @@ def uploadImage(imagefile:str, annotation:str|None, tagnames:list[str]) -> None:
     api = Api(shared.opts.immich_server_url_port, shared.opts.immich_api_key)
     dprint(f"DEBUG:on_image_saved:  uploaded image {api._url},{api._key}")
     try:
-        meta = { 'timeZone': 'Asia/Tokyo' } # TODO: timezone の設定を設定画面に作る
+        now = datetime.datetime.now().astimezone()
+        tz = datetime.timezone(now.tzinfo.utcoffset(None))
+        meta = { 'timeZone': tz.tzname(None) }
         if annotation:
             meta['description'] = annotation
         if shared.opts.immich_archive_after_upload:
